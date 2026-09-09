@@ -1,44 +1,47 @@
 .global app_main
 
 app_main:
-  # Carrega o endereço de IO_MUX_GPIO4
+  # load IO_MUX_GPIO4 address
   li t0, 0x60009020
   lw t1, 0(t0)
 
-  # Desativa o WPD 
+  # disable WPD (bit 7)
   li t2, 1
   slli t2, t2, 7
   xori t2, t2, -1
   and t2, t2, t1
 
-  # IO_MUX_GPIO4_FUN_WPU
-  # BIT numero 8
+  # enable WPU (bit 8)
   li t1, 1
   slli t1, t1, 8
 
-  # IO_MUX_GPIO4_FUN_IE
-  # BIT numero 9
+  # enable IE (bit 9)
   li t3, 1
   slli t3, t3, 9
-  
-  or t3, t3, t1
 
-  # Salva no registrador
+  # merges WPD, WPU and IE in t2. 
+  or t3, t3, t1
   or t2, t2, t3
   sw t2, 0(t0)
 
+  loop:
+    # load GPIO4_IN_REG
+    li t0, 0x60004003C
+    lw t1, 0(t0)
+  
+    # verify if the 4º is zero
+    li t2, 1
+    slli t2, t2, 4
+    and t1, t1, t2
+    beqz t1, loop
 
-
-
-
-
-
-
-
-
-
-
+    
+  
+    j loop
+  
   ret
+
+button_pressed:
 
 
 
