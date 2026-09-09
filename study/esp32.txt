@@ -1,0 +1,13 @@
+Configuration register for GPIO4 output
+GPIO_FUNC4_OUT_SEL_CFG_REG 0x0564
+
+
+Pin Configuration Registers
+GPIO_PIN4_REG 0x0084
+
+
+
+
+
+
+
