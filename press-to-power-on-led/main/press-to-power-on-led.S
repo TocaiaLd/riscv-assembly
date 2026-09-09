@@ -7,6 +7,11 @@ app_main:
   slli t1, t1, 8
   sw t1, 0(t0)
 
+  li t0, 0x60004008
+  li t1, 1
+  slli t1, t1, 8
+  sw t1, 0(t0)
+
   # load IO_MUX_GPIO4 address
   li t0, 0x60009020
   lw t1, 0(t0)
@@ -24,6 +29,16 @@ app_main:
   # enable IE (bit 9)
   li t3, 1
   slli t3, t3, 9
+  
+  # limpa bits 12, 13 e 14
+  li t4, 0x7000
+  xori t4, t4, -1
+  and t2, t2, t4
+
+  # MCU_SEL = 1
+  li t4, 1
+  slli t4, t4, 12
+  or t2, t2, t4
 
   # merges WPD, WPU and IE in t2. 
   or t3, t3, t1
@@ -31,6 +46,12 @@ app_main:
   sw t2, 0(t0)
 
   loop:
+    li t5, 10000000
+
+    delay:
+      addi t5, t5, -1
+      bnez t5, delay
+    
     # load GPIO_IN_REG
     li t0, 0x6000403C
     lw t1, 0(t0)
@@ -40,7 +61,7 @@ app_main:
     slli t2, t2, 4
     and t1, t1, t2
     bnez t1, led_off
-    beqz t1, led_on
+    j led_on
 
   led_on:
     # turns on the GPIO8's led
