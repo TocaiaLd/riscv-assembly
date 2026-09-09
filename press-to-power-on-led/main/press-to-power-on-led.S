@@ -35,13 +35,20 @@ app_main:
     and t1, t1, t2
     beqz t1, loop
 
-    
+    # turns on the GPIO8's led
+    li t0, 0x60004024
+    li t1, 1
+    slli t1, t1, 8
+    sw t1, 0(t0)
+
+    li t0, 0x6000400C
+    li t1, 1
+    slli t1, t1, 8
+    sw t1, 0(t0)
   
     j loop
   
   ret
-
-button_pressed:
 
 
 
