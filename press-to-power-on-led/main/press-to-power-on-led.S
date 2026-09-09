@@ -1,6 +1,12 @@
 .global app_main
 
 app_main:
+  # configure GPIO_ENABLE_W1TS_REG
+  li t0, 0x60004024
+  li t1, 1
+  slli t1, t1, 8
+  sw t1, 0(t0)
+
   # load IO_MUX_GPIO4 address
   li t0, 0x60009020
   lw t1, 0(t0)
@@ -25,29 +31,35 @@ app_main:
   sw t2, 0(t0)
 
   loop:
-    # load GPIO4_IN_REG
-    li t0, 0x60004003C
+    # load GPIO_IN_REG
+    li t0, 0x6000403C
     lw t1, 0(t0)
   
-    # verify if the 4º is zero
+    # verify if the 4º bit (GPIO4) is zero
     li t2, 1
     slli t2, t2, 4
     and t1, t1, t2
-    beqz t1, loop
+    bnez t1, led_off
+    beqz t1, led_on
 
+  led_on:
     # turns on the GPIO8's led
-    li t0, 0x60004024
-    li t1, 1
-    slli t1, t1, 8
-    sw t1, 0(t0)
-
     li t0, 0x6000400C
     li t1, 1
     slli t1, t1, 8
     sw t1, 0(t0)
-  
+
     j loop
-  
+
+  led_off:
+    # turns off the GPIO8's led
+    li t0, 0x60004008
+    li t1, 1
+    slli t1, t1, 8
+    sw t1, 0(t0)
+
+    j loop
+
   ret
 
 
